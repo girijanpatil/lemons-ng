@@ -1,0 +1,84 @@
+.page-header .nav > li > .head-user {
+	width: 200px;
+}
+
+.page-header .nav > li.divider {
+	margin: 0 20px 0 0 !important;
+}
+
+.glyphicon-user {
+	position: absolute;
+	left: 5%;
+	top: 24%;
+}
+.user-text {
+	font-size: 13px !important; 
+	color: #fff;
+	text-decoration: none;
+}
+
+.user-img{
+	width: 41px;
+	height: 40px;
+	border-radius: 28px;
+	margin: 0 10px;
+}
+
+.nav li {
+	cursor: pointer;
+}
+
+.nav ul {
+	display: none;
+	position: absolute; 
+	left: 4%;
+	max-height: 173px;
+	/* overflow: hidden;
+	overflow-y: scroll; */
+}
+
+.nav li:hover > ul {
+	display:inherit;
+}
+
+.nav ul li {
+	float:none;
+	display:list-item;
+	position: relative;
+}
+
+.label-logout {
+	background-color: transparent;
+}
+
+.nav .profile {
+	overflow-y: unset !important;
+	padding: 0 !important;
+}
+
+.nav .profile li a:hover {
+	background-color:  #d63737 !important;
+}
+
+.support {
+	background: rgba(73, 81, 97, 0.67);
+}
+
+.dropdown-menu {
+	border: 1px solid #5e6878 !important;
+}
+
+.navbar {
+	position: relative;
+	
+	ul {
+		position: absolute;
+		right: 0;
+	}
+}
+
+@media only screen and (max-width: 767px) {
+	.page-header {
+		display: none;
+	}
+}

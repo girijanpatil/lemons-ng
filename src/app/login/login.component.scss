@@ -1,0 +1,119 @@
+// app-login{
+//     height: 90%;
+// }
+
+body {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+.widget header img {
+	width: 52%;
+}
+
+.forgot {
+	padding: 7px 0 !important;
+}
+
+.forgot:hover {
+	color: #c4d6e6 !important;
+	text-decoration: none;
+}
+
+.action-links {
+	padding: 13px 0 24px;
+}
+
+/***********************************/
+/**          LOGIN                **/
+/**********************************/
+.single-widget-container {
+	left: 0;
+	top: 40%;
+	margin-top: -192.5px;
+	position: absolute;
+	width: 100%;
+}
+
+.single-widget-container .widget {
+	margin: 0 auto;
+	padding:18px;
+	padding-bottom:0px;
+	background-color: rgba(0,0,0,0.2) !important;
+  }
+  
+  .login-widget, .registration-widget {
+	width: 350px;
+	padding-bottom: 0;
+	background-color: transparent !important;
+  }
+  
+  .login-widget header, .registration-widget header {
+	margin: 15px 0 25px 0;
+	background-color: transparent !important;
+  }
+  
+  .login-widget .form-control, .registration-widget .form-control {
+	font-size: 13px;
+  }
+  
+  .login-widget .input-group-addon, .registration-widget .input-group-addon {
+	padding: 8px 7px;
+  }
+  
+  .login-widget .input-group-addon i, .login-widget .input-group-addon i:before, .login-widget .input-group-addon i:after, .registration-widget .input-group-addon i, .registration-widget .input-group-addon i:before, .registration-widget .input-group-addon i:after {
+	width: 20px;
+	margin: 0;
+  }
+  
+  .login-widget .form-actions, .registration-widget .form-actions {
+	margin: 0 -17px;
+	padding: 20px 15px 0 15px;
+  }
+  
+  .login-widget .form-actions .small-circle, .registration-widget .form-actions .small-circle {
+	display: inline-block;
+	width: 20px;
+	height: 20px;
+	line-height: 20px;
+	border-radius: 50%;
+	background: rgba(0, 0, 0, 0.2);
+  }
+  
+  .login-widget .form-actions .small-circle i, .registration-widget .form-actions .small-circle i {
+	position: relative;
+	left: 1px;
+  }
+  
+  .login-widget .form-actions .forgot, .registration-widget .form-actions .forgot {
+	display: block;
+	text-align: center;
+	color: white;
+	padding: 15px 0;
+  }
+  
+  .login-widget footer, .registration-widget footer {
+	margin: 0 -17px;
+	border-bottom-left-radius: 3px;
+	border-bottom-right-radius: 3px;
+	overflow: hidden;
+	position: static;
+  }
+  
+  .login-widget .facebook-login, .registration-widget .facebook-login {
+	-webkit-box-sizing: content-box;
+	-moz-box-sizing: content-box;
+	box-sizing: content-box;
+	height: 30px;
+	background: #4e85bd;
+	text-align: center;
+	padding-top: 10px;
+  }
+  
+  .login-widget .facebook-login a, .registration-widget .facebook-login a {
+	color: #ffffff;
+	display: block;
+	text-shadow: none;
+	text-decoration: none;
+  }
+  

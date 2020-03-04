@@ -1,0 +1,34 @@
+<header class="page-header">
+    <div class="navbar">
+        <ul class="nav navbar-nav navbar-right">
+            <li class="dropdown">
+                <a title="Account" id="account"
+                    class="head-user dropdown-toggle"
+                    data-toggle="dropdown">
+                    <i class="glyphicon glyphicon-user"></i>
+                    <a class="user-text">{{ name }}</a>
+                </a>
+                <ul id="support-menu" class="profile dropdown-menu support" role="menu">
+                    <li role="presentation">
+                        <a *ngIf="loggedIn" class="support-ticket" (click)="logout()">
+                            <div class="picture">
+                                <span class="label label-logout"><i class="glyphicon glyphicon-off"></i></span>
+                            </div>
+                            <div class="details">
+                                Logout
+                            </div>
+                        </a>                            
+                        <a *ngIf="!loggedIn" class="support-ticket" routerLink="/">
+                            <div class="picture">
+                                <span class="label label-logout"><i class="glyphicon glyphicon-off"></i></span>
+                            </div>
+                            <div class="details">
+                                Login
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+            </li>    
+        </ul>
+    </div>
+</header>

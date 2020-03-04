@@ -1,0 +1,124 @@
+<div *ngIf="isProcessing" class="text-center">
+    <img style="padding:222px 0;" src="../../assets/img/loader.gif">
+</div>
+
+<div *ngIf="!isProcessing" class="row">
+    <div [formGroup]="fxorderForm" class="col-sm-12">
+        <section class="widget manifest_widget" style="margin:0 !important;">
+            <div class="row">
+                <div class="form-group center">
+                    <p class="col-sm-12" style="border-bottom:1px solid #505661; padding:5px;">
+                        <b>Update FX Order</b>
+                    </p>
+                </div>
+                <div class="form-group center col-sm-12">
+                    <label for="normal-field" class="col-12 control-label rulelabel p-5">Ccy Pair</label>
+                    <div class="col-12">
+                        <select class="form-control input-transparent" formControlName="securityId" (change)="onCurrencyChange($event.target.value)" required>
+                            <option value="" disabled selected>Select</option>
+                            <option *ngFor="let security of securities" value="{{ security.id }}">{{ security.name }}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group center col-sm-6 p-0">
+                    <div class="col-sm-4">
+                        <button type="button" class="btn btn-success" *ngIf="fxorderForm.value.direction=='BUY'" style="pointer-events:none;">Buy</button>
+                        <button type="button" class="btn btn-danger" *ngIf="fxorderForm.value.direction=='SELL'" style="pointer-events:none;">Sell</button>
+                    </div>
+                    <div class="col-sm-8">
+                        <input type="hidden" class="form-control input-transparent text-center"  formControlName="dealtCcyId" disabled>
+                        <input type="text" [value]="dealtCcyCode" class="form-control input-transparent text-center" disabled>
+                    </div>
+                </div>
+                <div class="form-group center col-sm-6 p-0">
+                    <div class="col-sm-12">
+                        <input type="text" class="form-control input-transparent" placeholder="Notional" formControlName="notional" (blur)="onNotionalChange($event.target.value)" required>
+                    </div>
+                </div>
+                <div class="form-group center col-sm-12">
+                    <label for="normal-field" class="col-sm-12 control-label rulelabel p-5">Value Date</label>
+                    <div class="col-sm-6 p-0">
+                        <select class="form-control input-transparent" formControlName="tenorId" (change)="onTenorChange($event.target.value)" required>
+                            <option value="" disabled selected>Select</option>
+                            <option *ngFor="let tenor of tenors" value="{{ tenor.id }}">{{ tenor.name }}</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-6 p-0">
+                        <input type="text" class="form-control input-transparent text-right" bsDatepicker formControlName="settlementDate" (ngModelChange)="onSettlementDateChange($event)" required>
+                    </div>
+                </div>
+                <div class="form-group center col-sm-12">
+                    <label for="normal-field" class="col-12 control-label rulelabel p-5">Limit Price</label>
+                    <div class="col-12">
+                        <input type="number" class="form-control input-transparent" formControlName="price" required>
+                    </div>
+                </div>
+                <div class="form-group center col-sm-6">
+                    <label for="normal-field" class="col-12 control-label rulelabel p-5">Good From</label>
+                    <div class="col-12">
+                        <input type="text" class="form-control input-transparent" bsDatepicker formControlName="validFrom" required>
+                    </div>
+                </div>
+                <div class="form-group center col-sm-6">
+                    <label for="normal-field" class="col-12 control-label rulelabel p-5">Good Untill</label>
+                    <div class="col-12">
+                        <input type="text" class="form-control input-transparent" bsDatepicker formControlName="validTill" required>
+                    </div>
+                </div>
+                <div class="form-group center col-sm-6">
+                    <label for="normal-field" class="col-12 control-label rulelabel p-5">Accounts</label>
+                    <div class="col-12">
+                        <select class="form-control input-transparent" formControlName="accountId" required>
+                            <option value="" disabled selected>Select</option>
+                            <option *ngFor="let account of accounts" value="{{ account.id }}">{{ account.accountName }}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group center col-sm-6">
+                    <label for="normal-field" class="col-12 control-label rulelabel p-5">Brokers</label>
+                    <div class="col-12">
+                        <select class="form-control input-transparent" formControlName="brokerId" required>
+                            <option value="" disabled selected>Select</option>
+                            <option *ngFor="let broker of brokers" value="{{ broker.id }}">{{ broker.name }}</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group center col-sm-6 hidden">
+                    <label for="normal-field" class="col-12 control-label rulelabel p-5">Asset Class</label>
+                    <div class="col-12">
+                        <input type="text" class="form-control input-transparent" formControlName="assetClass" required>
+                    </div>
+                </div>
+                
+                <div class="form-group center col-sm-6 hidden">
+                    <label for="normal-field" class="col-12 control-label rulelabel p-5">Order Date</label>
+                    <div class="col-12">
+                        <input type="text" class="form-control input-transparent" bsDatepicker formControlName="orderDate" required>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="col-sm-12" style="border-top:1px solid #3B404A;">
+        <section class="widget manifest_widget" style="margin:0 !important; padding-top: 15px !important;">
+            <div class="form-horizontal">
+                <div class="right">
+                    <div class="row">
+                        <div class="col-sm-6"></div>
+                        <div class="col-sm-6 control-label rulelabel mnf_btn">
+                            <button class="btn btn-save savebtn btn-lg pull-right" (click)="close()">
+                                <i class="fa fa-times fa-darkicon bg-info text-white"></i> CANCEL
+                            </button>
+                            <button type="submit" class="btn btn-save savebtn btn-lg pull-right" [disabled]="!fxorderForm.valid" (click)="update()">
+                                <i class="fa fa-check fa-darkicon bg-success text-white"></i> SAVE
+                            </button>
+                        </div>
+        
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>     

@@ -1,0 +1,62 @@
+<input type="checkbox" id="show-menu" class="">
+<label for="show-menu" class="show-menu"><div class="lines"></div></label>
+<nav id="sidebar" class="sidebar ex8_sidebar nav-collapse collapse">
+  <ul id="side-nav" class="side-nav"> 
+    <li class="sb_logo">
+        <img src="../assets/img/logo.png">
+    </li>    
+
+    <!-- <li *ngIf='isLoggedIn$ | async' class="sb_acc">
+        <a>
+            <i class="fa fa-user sb-icon"></i>
+            <span class="name">{{username$ | async}}</span>
+        </a>
+    </li>
+    <li *ngIf='!(isLoggedIn$ | async)' class="sb_acc">
+        <a (click)="login()">
+            <i class="fa fa-user sb-icon"></i>
+            <span class="name">Login</span>
+        </a>
+    </li> -->
+
+    <li *ngFor="let sb of sidebar" [ngClass]="{'active': selectedSidebarId === sb.id}">
+        <a [routerLink]="sb.link" (click)="sb.isCollapsed = !sb.isCollapsed" (click)="setSelected(sb.id)">
+            <i class="{{ sb.font }} sb-icon"></i>
+            <span class="name">{{ sb.name }}</span>
+        </a>
+        <div id="collapse" *ngIf="sb.child" [collapse]="sb.isCollapsed">
+            <div *ngFor="let csb of sb.child">
+                <ul>
+                    <li [ngClass]="{'active': selectedSidebarId === csb.id}">
+                        <a [routerLink]="csb.link" class="menu-2" (click)="csb.isCollapsed = !csb.isCollapsed" (click)="setSelected(csb.id)">
+                            <i class="{{ csb.font }} sb-icon-i"></i>
+                            <span class="name">{{ csb.name }}</span>
+                        </a>
+                    </li>
+                </ul>
+                <ul id="collapse" class="cc" *ngIf="csb.child" [collapse]="csb.isCollapsed">
+                    <li [ngClass]="{'active': selectedSidebarId === cc.id}" *ngFor="let cc of csb.child">
+                        <a [routerLink]="cc.link" class="menu-2" (click)="setSelected(cc.id)">
+                            <i class="{{ cc.font }} sb-icon-i"></i>
+                            <span class="name">{{ cc.name }}</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </li>
+
+    <!-- <li *ngIf='isLoggedIn$ | async' class="sb_acc">
+        <a (click)="logoff()">
+            <i class="fa fa-sign-out sb-icon"></i>
+            <span class="name">Logout</span>
+        </a>                            
+    </li> -->
+  </ul>
+
+    <!-- <footer class="content-footer">
+        <p class="small"><a href="https://www.exatetech.com/" rel="nofollow noopener noreferrer" target="_blank">Exate Technology Ltd</a></p>
+        <p class="small">Environment: {{environmentName}}</p>
+        <p class="small">Build no: {{buildNumber}}</p>
+    </footer> -->
+</nav>

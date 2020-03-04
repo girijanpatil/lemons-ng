@@ -1,0 +1,15 @@
+app-fxorder{
+    height: 90%;
+}
+
+::ng-deep html, body {
+    height: 98%;
+}
+
+mat-icon {
+    cursor: pointer;
+}
+
+.header {
+    padding: 0 5px 0 5px;
+}

@@ -1,0 +1,87 @@
+<div class="row cardpage">
+    <h2 class="cardtitle">FX Orders
+        <button type="button"  class="btn btn-inverse circlebtn pull-right" (click)="add()">
+            <span class="glyphicon glyphicon-plus add"></span>
+        </button>
+    </h2>
+
+    <div class="col-md-12">
+        <section class="widget">
+          <div class="body">
+            <div class="row tbl-head">
+              <div class="col-md-6 hidden-xs"></div>
+              <div class="col-md-6">
+                <div id="datatable-table_filter" class="form-inline pull-right">
+                  <label>
+                    <input type="search" class="form-control input-transparent ml-sm" placeholder=" Search" aria-controls="datatable-table">
+                  </label>
+                </div>
+              </div>
+            </div>
+    
+            <table class="table table-striped" >
+              <thead>
+                <tr>
+                  <th>Lemon Id</th>
+                  <th>TS Id</th>
+                  <th>Ccy Pair</th>
+                  <th>Direction</th>
+                  <th>Notional</th>
+                  <th>Fwd Rate</th>
+                  <th>Status</th>
+                  <th>Account</th>
+                  <th>Broker</th>
+                  <!-- <th>Modified By</th>
+                  <th>Modified On</th> -->
+                  <th colspan="2">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let order of fxorders">
+                  <td>{{ order.id }}</td>
+                  <td>{{ order.orderId }}</td>
+                  <td>{{ order.security.name }}</td>
+                  <td *ngIf="order.direction=='BUY'">
+                    <button class="btn btn-success btn-sm" style="pointer-events:none;">{{ order.direction }}</button>
+                  </td>
+                  <td *ngIf="order.direction=='SELL'">
+                    <button class="btn btn-danger btn-sm" style="pointer-events:none;">{{ order.direction }}</button>
+                  </td>
+                  <td>{{ order.notional }}</td>
+                  <td>{{ order.price }}</td>
+                  <td *ngIf="order.status=='EXECUTED'">
+                    <button class="btn btn-success btn-sm" style="pointer-events:none;">{{ order.status }}</button>
+                  </td>
+                  <td *ngIf="order.status=='POSTED'">
+                    <button class="btn btn-warning btn-sm" style="pointer-events:none;">{{ order.status }}</button>
+                  </td>
+                  <td *ngIf="order.status=='WAIT'">
+                    <button class="btn btn-info btn-sm" style="pointer-events:none;">{{ order.status }}</button>
+                  </td>
+                  <td>{{ order.account.accountName }}</td>
+                  <td>{{ order.broker.name }}</td>
+                  <!-- <td>{{ order.modifiedBy }}</td>
+                  <td>{{ order.modifiedOn + 'Z' | date: 'medium' }}</td> -->
+                  <td>
+                    <button *ngIf="order.status!='EXECUTED'" class="btn btn-inverse btn-sm" (click)="edit(order)">
+                      <span class="glyphicon glyphicon-wrench"></span> EDIT
+                    </button>
+                    <button *ngIf="order.status=='EXECUTED'" class="btn btn-inverse btn-sm" disabled>
+                      <span class="glyphicon glyphicon-wrench"></span> EDIT
+                    </button>
+                  </td>
+                  <td>
+                    <button *ngIf="order.status=='WAIT'" class="btn btn-inverse btn-sm" (click)="delete(order.id)">
+                      <span class="glyphicon glyphicon-trash"></span> Delete
+                    </button>
+                    <button *ngIf="order.status!='WAIT'" class="btn btn-inverse btn-sm" disabled>
+                      <span class="glyphicon glyphicon-trash"></span> Delete
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+</div>

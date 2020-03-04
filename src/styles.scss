@@ -1,0 +1,145 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import '~ngx-toastr/toastr';
+
+// CSS from template 
+@import './assets/css/wrapbootstrap-dark.scss';
+@import 'assets/css/bs-datepicker.scss';
+
+// Custom global CSS
+@import 'assets/css/exate-portal.scss';
+
+// Removed
+// @import '../assets/css/fontawesome-free-5.8.2-web/css/all.min.scss';
+
+
+.modal-content{
+    margin-top:100px !important;
+    padding:0 !important;
+    width:1000px;
+    left:-280px;
+}
+
+.modal-footer{
+    padding:0 !important;
+}
+
+// .modal-content, .modal-header, .modal-body, .modal-footer{
+//     background-color: white !important;
+//     color:black !important;
+//     // padding:0 !important;
+// }
+
+// .modal-title{
+//     font-weight:bold;
+//     color:#3B434D !important;
+// }
+
+
+
+// Modal Testing
+
+.btn-expand { 
+	position: absolute;
+	bottom: -12px;
+	padding: 6px 18px;
+	border-radius: 15px;
+	left: 50%;
+	transform: translate(-50%, 0);
+	outline: none !important;
+	font-weight: 700;
+}
+
+.btn.disabled, .btn[disabled] {
+	color: #41485b;
+}
+
+textarea:disabled {
+	background: #afadad;
+	cursor: not-allowed;
+}
+
+.mnf_btn .savebtn {
+	padding: 6px 15px 6px 8px;
+	min-width: 92px;
+}
+
+.mnf_details_btn {
+	display: flex;
+	justify-content: flex-end;
+}
+
+.active {
+	color: #555 !important;
+ 	background-color: #f8f8f8 !important;
+  	border-color: rgba(0, 0, 0, 0.2) !important;
+}
+
+.col-md-1 .fa-check {
+	color: #08c708;
+}
+
+.col-md-1 .fa-times {
+	color: #b91c1c;
+}
+
+.col-md-1 .fa-check, .fa-times {
+	padding: 0 12px;
+	font-size: 1.2em;
+}
+
+/* Toggle */
+	.manifest_slider {
+		position: absolute;
+		top: 5%;
+		right: 7%;
+		z-index: 1;
+		flex-direction: column;
+	}
+	
+	.text-right {
+		padding-bottom: 10px;
+	}
+
+	.manifest_slider input:checked + .slider {
+		background-color: #34a94e;
+	}
+/* End Toggle */
+
+/* Start Custom Table */
+	table tr th:first-child, table tr td:first-child {
+		padding-left: 15px;
+	}
+/* End Custom Table */
+
+
+.btn-lg
+{
+  margin-top: 5px;
+}
+
+.form-horizontal .control-label {
+    text-align: left;
+}
+
+.form-horizontal .form-group {
+    margin: 20px 0 18px;
+    display: flex;
+    justify-content: center;
+}
+
+.fa-times {
+    font-size: unset;
+}
+
+.p-0{
+	padding:0 !important;
+}
+
+.m-0{
+	margin:0 !important;
+}
+
+.p-5{
+	padding:5px !important;
+}

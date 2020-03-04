@@ -1,0 +1,131 @@
+// ---------------- SIDEBAR CUSTOM DESIGN ----------------------- //
+
+$color_1: #b9b9b9;
+
+.ex8_sidebar {
+	margin: 0 !important;
+	padding: 10px 0px 5px 2px !important;
+	width: 215px;
+	background: rgba(51, 51, 51, 0.425);
+	height: 100%;
+	border-left: 35px solid #1e2134ba;
+	flex-direction: column;
+	ul {
+		flex-grow: 2;
+	}
+	li {
+		position: relative;
+		padding: 6px 0;
+		cursor: pointer;
+		ul {
+			li {
+				padding: 0;
+			}
+		}
+	}
+}
+
+.sb_acc {
+	display: none;
+	margin: 10px 0;
+	border-top:  1px solid #6f7d8d;
+	border-bottom:  1px solid #6f7d8d;
+}
+
+.show-menu {
+	text-decoration: none;
+	color: #fff;
+	text-align: center;
+	padding: 18px 0 0;
+	display: none;
+	cursor: pointer;
+	text-transform: uppercase;
+	min-height: 48px;
+	position: relative;
+	z-index: 2;
+	  
+	span {
+		padding-left: 25px;
+	}
+}
+
+input[type=checkbox] {
+	display: none;
+}
+
+input[type=checkbox]:checked ~ #sidebar{
+	display: flex;
+}
+
+.sb-icon {
+	position: absolute;
+	left: -31px;
+}
+.sb-icon-i {
+	position: absolute;
+	left: 1.1em;
+	opacity: 0.6 !important;
+	font-size: 12px !important;
+}
+.menu-2 {
+	padding-left: 3.1em;
+}
+.sb-icon-col {
+	position: absolute;
+	left: 8em;
+	color: $color_1;
+	font-size: 0.9em !important;
+}
+.sidebar {
+	img {
+		width: 100px;
+	}
+}
+.sb_logo {
+	padding: 13px 10px 29px !important;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.cc {
+	padding-left: 25px;
+}
+footer {
+	font-size: 13px;
+	padding: 7px 20px;
+	p {
+		margin: 0 0 4px; 
+	}
+}
+
+// ------------------ SIDEBAR CUSTOM RESPONSIVE DESIGN ----------------------- //
+
+@media only screen and (max-width: 767px) {
+	.nsb {
+		display: none;
+	}
+
+	.ex8_sidebar {
+		background: rgb(60, 64, 74);
+		display: none;
+		width: 60%;
+	}
+
+	.lines {
+		border-bottom: 12px double #f8f8f8; 
+		border-top: 4px solid #f8f8f8; 
+		content:"";
+		height: 20px; 
+		width:31px;
+		float: right;
+	}
+
+	.show-menu {
+		display:block;
+	}
+
+	.sb_acc {
+		display: block;
+	}
+}

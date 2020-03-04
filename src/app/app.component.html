@@ -1,0 +1,16 @@
+<!-- Login Page -->
+<div *ngIf="!isLoggedIn()">
+    <router-outlet></router-outlet>     
+</div>
+
+<!-- Other Pages -->
+<div *ngIf="isLoggedIn()">
+    <app-sidebar></app-sidebar>
+    <app-header></app-header>
+    <div class="wrap">
+        <div class="content container">  
+            <app-breadcrumb></app-breadcrumb>
+            <router-outlet></router-outlet>     
+        </div>
+    </div>
+</div>
