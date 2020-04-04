@@ -4,8 +4,9 @@
 
 export const environment = {
   production: false,
-  apiHost: 'http://lemonsapi.alliancetechnos.com/api/',
-  // apiHost: 'http://192.168.1.5/api/',
+  // apiHost: 'http://lemonsapi.alliancetechnos.com/api/',
+  apiHost: 'http://192.168.1.5/api/',
+  // apiHost: 'http://lemonsapi.rvcapitalfunds.com/api/'
 };
 
 /*

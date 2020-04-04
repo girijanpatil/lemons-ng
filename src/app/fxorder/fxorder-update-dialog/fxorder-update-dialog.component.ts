@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { FxorderService } from 'src/app/services/fxorder/fxorder.service';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Broker } from 'src/app/models/broker';
@@ -16,6 +16,7 @@ import { Resp } from 'src/app/models/resp';
 import { FxorderPayload } from 'src/app/payloads/fxorderpayload';
 
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { formatNumber } from '@angular/common';
 
 @Component({
   selector: 'app-fxorder-update-dialog',
@@ -23,9 +24,9 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
   styleUrls: ['./fxorder-update-dialog.component.scss']
 })
 export class FxorderUpdateDialogComponent implements OnInit {
-  @Input('editData') public editData:Fxorder;
+  @Input() editData: Fxorder;
   fxOrderNotification: any;
-  dealtCcyCode = "XXX";
+  dealtCcyCode = 'XXX';
 
   fxorderForm: FormGroup;
   accounts: Account[];
@@ -34,14 +35,19 @@ export class FxorderUpdateDialogComponent implements OnInit {
   securities: SecurityMaster[];
   tenors: Tenor[];
 
-  isProcessing = false;
+  isProcessing        = false;
+
+  goodFromTime: Date  = new Date();
+  goodUntilTime: Date;
+  goodFromTimeZone    = 'SGT';
+  goodUntilTimeZone   = 'EST';
 
   constructor(
     private fb: FormBuilder,
-    private fxorderService: FxorderService, 
-    private accountService: AccountService, 
+    private fxorderService: FxorderService,
+    private accountService: AccountService,
     private brokerService: BrokerService,
-    private currencyService: CurrencyService, 
+    private currencyService: CurrencyService,
     private securityMasterService: SecurityMasterService,
     private tenorService: TenorService,
     private modalRef: BsModalRef,
@@ -50,6 +56,14 @@ export class FxorderUpdateDialogComponent implements OnInit {
   ngOnInit() {
     this.getData();
     this.formInit();
+
+    // Set Default Time Of Good Until
+    const time = new Date();
+    time.setHours(17);
+    time.setMinutes(0);
+    time.setSeconds(0);
+
+    this.goodUntilTime = time;
 
     setTimeout(() => {
       this.setFormData();
@@ -69,26 +83,25 @@ export class FxorderUpdateDialogComponent implements OnInit {
       price: this.fb.control(null, Validators.required),
       securityId: this.fb.control(null, Validators.required),
       settlementDate: this.fb.control(null, Validators.required),
-      tenorId: this.fb.control(null, Validators.required),
+      tenorId: this.fb.control(''),
       validFrom: this.fb.control(new Date(), Validators.required),
       validTill: this.fb.control(null, Validators.required),
     });
   }
 
-  setFormData()
-  {
+  setFormData() {
     this.fxorderForm.get('id').setValue(this.editData.id);
     this.fxorderForm.get('accountId').setValue(this.editData.account.id);
     this.fxorderForm.get('assetClass').setValue(this.editData.assetClass);
     this.fxorderForm.get('brokerId').setValue(this.editData.broker.id);
     this.fxorderForm.get('dealtCcyId').setValue(this.editData.dealtCcy.id);
     this.fxorderForm.get('direction').setValue(this.editData.direction);
-    this.fxorderForm.get('notional').setValue(this.editData.notional);
+    this.fxorderForm.get('notional').setValue(formatNumber(this.editData.notional, 'en'));
     this.fxorderForm.get('orderDate').setValue(new Date(this.editData.orderDate));
     this.fxorderForm.get('price').setValue(this.editData.price);
     this.fxorderForm.get('securityId').setValue(this.editData.security.id);
     this.fxorderForm.get('settlementDate').setValue(new Date(this.editData.settlementDate));
-    this.fxorderForm.get('tenorId').setValue(this.editData.tenor.id);
+    // this.fxorderForm.get('tenorId').setValue('');
     this.fxorderForm.get('validFrom').setValue(new Date(this.editData.validFrom));
     this.fxorderForm.get('validTill').setValue(new Date(this.editData.validTill));
     this.dealtCcyCode = this.editData.dealtCcy.code;
@@ -110,10 +123,10 @@ export class FxorderUpdateDialogComponent implements OnInit {
     });
   }
 
-  onCurrencyChange(securityId: number) {
-    const security = this.securities.find(s => s.id == securityId);
+  onCurrencyChange(securityId: string) {
+    const security = this.securities.find(s => s.id === parseInt(securityId, 0));
     const dealtCcyId = security.primaryCcy.id;
-    const dealtCcyCode = security.primaryCcy.code;    
+    const dealtCcyCode = security.primaryCcy.code;
 
     this.fxorderForm.patchValue({
       dealtCcyId
@@ -123,27 +136,30 @@ export class FxorderUpdateDialogComponent implements OnInit {
   }
 
   onNotionalChange(value: any) {
-    if(value.length > 0) {
-      let startValue    = value.substring(0, value.length-1);
+    value = value.replace(/,/g, '');
+    if (value.length > 0) {
+      const startValue  = value.substring(0, value.length - 1);
       const lastLetter  = (value.slice(-1)).toUpperCase();
       let multiplyBy    = 0;
       let notional: any;
 
-      if(isNaN(value)){
-        if(lastLetter == "K") {
+      if (isNaN(value)) {
+        if (lastLetter === 'K') {
           multiplyBy = 1000;
-        }else if(lastLetter == "M") {
+        } else if (lastLetter === 'M') {
           multiplyBy = 1000000;
-        }else if(lastLetter == "B") {
+        } else if (lastLetter === 'B') {
           multiplyBy = 1000000000;
         }
-  
-        if(!isNaN(startValue)){
-          notional = startValue*multiplyBy;
+
+        if (!isNaN(startValue)) {
+          notional = startValue * multiplyBy;
         }
-      }else {
+      } else {
         notional = value;
       }
+
+      notional = formatNumber(notional, 'en');
 
       this.fxorderForm.patchValue({
         notional
@@ -151,8 +167,8 @@ export class FxorderUpdateDialogComponent implements OnInit {
     }
   }
 
-  onTenorChange(value: number) {
-    const tenor           = this.tenors.find(f => f.id == value);
+  onTenorChange(value: string) {
+    const tenor           = this.tenors.find(f => f.id === parseInt(value, 0));
     const validFrom       = new Date();
     const validTill       = new Date(new Date().setDate(validFrom.getDate() + tenor.fwdDays));
     const settlementDate  = validTill;
@@ -164,8 +180,7 @@ export class FxorderUpdateDialogComponent implements OnInit {
     });
   }
 
-  onSettlementDateChange(settlementDate:string)
-  {
+  onSettlementDateChange(settlementDate: string) {
     const validTill = settlementDate;
 
     this.fxorderForm.patchValue({
@@ -173,18 +188,32 @@ export class FxorderUpdateDialogComponent implements OnInit {
     });
   }
 
+  toggleTimeZone(timezone: string) {
+    if (timezone === 'EST') {
+      timezone = 'SGT';
+    } else {
+      timezone = 'EST';
+    }
+
+    return timezone;
+  }
+
   update() {
     if (!this.isProcessing) {
       this.isProcessing = true;
       const buyId       = this.fxorderForm.get('id').value;
-      const model: FxorderPayload = this.fxorderForm.value;
+      const model       = this.fxorderForm.value;
 
-      model.accountId    = parseInt(model.accountId.toString());
-      model.brokerId     = parseInt(model.brokerId.toString());
-      model.notional     = parseFloat(model.notional.toString());
-      model.price        = parseFloat(model.price.toString());
-      model.securityId   = parseInt(model.securityId.toString());
-      model.tenorId      = parseInt(model.tenorId.toString());
+      model.accountId   = parseInt(model.accountId.toString(), 0);
+      model.brokerId    = parseInt(model.brokerId.toString(), 0);
+      model.notional    = parseFloat(model.notional.replace(/,/g, '').toString());
+      model.price       = parseFloat(model.price.toString());
+      model.securityId  = parseInt(model.securityId.toString(), 0);
+      // model.tenorId     = parseInt(model.tenorId.toString());
+
+      // Bind Time to Dates
+      model.validFrom      = this.bindDateTimeZone(model.validFrom, this.goodFromTime, this.goodFromTimeZone);
+      model.validTill      = this.bindDateTimeZone(model.validTill, this.goodUntilTime, this.goodUntilTimeZone);
 
       this.fxorderService.update(buyId, model).subscribe((resp: Resp<Fxorder>) => {
         this.isProcessing = false;
@@ -192,6 +221,32 @@ export class FxorderUpdateDialogComponent implements OnInit {
         this.close();
       });
     }
+  }
+
+  bindDateTimeZone(date: Date, time: Date, zone: string): Date {
+    let timeZone: string;
+    let newDate: Date;
+    let minutes: number;
+
+    if (zone === 'EST') {
+      // group = 'UTC−05:00';
+      timeZone  = 'America/New_York';
+      minutes   = 570;
+    } else if (zone === 'SGT') {
+      // group = 'UTC+8';
+      timeZone = 'Asia/Singapore';
+      minutes  = -150;
+    }
+
+    newDate = new Date(date.getFullYear(), date.getMonth(), date.getDate(), time.getHours(), time.getMinutes(), time.getSeconds());
+    // newDate = new Date(newDate.toLocaleString('en-US', { timeZone }));
+    newDate = new Date(newDate.getTime() + minutes * 60000);
+
+    newDate.setFullYear(date.getFullYear());
+    newDate.setMonth(date.getMonth());
+    newDate.setDate(date.getDate());
+
+    return newDate;
   }
 
   close() {

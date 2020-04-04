@@ -13,12 +13,12 @@ import { retry } from 'rxjs/operators';
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit {
-
+  isLoading = false;
   loginForm: FormGroup;
 
   constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {  }
 
-  ngOnInit() { 
+  ngOnInit() {
     if (this.authService.user !== null) {
       const route = this.authService.getRoute();
       this.router.navigate([route]);
@@ -26,11 +26,12 @@ export class LoginComponent implements OnInit {
 
     this.loginForm = this.fb.group({
       email: this.fb.control(null, [Validators.required, Validators.email]),
-      password: this.fb.control(null,Validators.required)
+      password: this.fb.control(null, Validators.required)
     });
   }
 
   login() {
+    this.isLoading = true;
     if (this.loginForm.valid) {
       this.authService.login(this.loginForm.value).subscribe((resp: Resp<Auth>) => {
         // console.log(resp);
@@ -38,5 +39,6 @@ export class LoginComponent implements OnInit {
         this.router.navigate([route]);
       });
     }
+    this.isLoading = false;
   }
 }

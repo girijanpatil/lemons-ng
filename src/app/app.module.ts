@@ -1,9 +1,10 @@
 // Angular Core
+  import { BrowserModule } from '@angular/platform-browser';
   import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
   import { NgModule, ErrorHandler, NO_ERRORS_SCHEMA } from '@angular/core';
   import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
   import { CommonModule, LocationStrategy, HashLocationStrategy } from '@angular/common';
-  import { ReactiveFormsModule } from '@angular/forms';
+  import { ReactiveFormsModule, FormsModule } from '@angular/forms';
   import { FlexLayoutModule } from '@angular/flex-layout';
 
 // Routes
@@ -12,7 +13,9 @@
 // NGX-Bootstrap
   import { ModalModule, BsModalRef } from 'ngx-bootstrap/modal';
   import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+  import { TimepickerModule } from 'ngx-bootstrap/timepicker';
   import { ToastrModule } from 'ngx-toastr';
+  import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
 // Validation & Error Handling
   import { DigitOnlyModule } from '@uiowa/digit-only';
@@ -31,8 +34,10 @@
   import { FxorderUpdateDialogComponent } from './fxorder/fxorder-update-dialog/fxorder-update-dialog.component';
 
 
-@NgModule({
+  @NgModule({
   imports: [
+    BrowserModule,
+    FormsModule,
     CommonModule,
     BrowserAnimationsModule,
     AppRoutingModule,
@@ -42,7 +47,9 @@
     DigitOnlyModule,
     ModalModule.forRoot(),
     BsDatepickerModule.forRoot(),
-    ToastrModule.forRoot()
+    TimepickerModule.forRoot(),
+    ToastrModule.forRoot(),
+    TooltipModule.forRoot()
   ],
   declarations: [
     AppComponent,
@@ -60,9 +67,9 @@
     FxorderUpdateDialogComponent
   ],
   providers: [
-    { 
+    {
       provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
-    // { provide: LocationStrategy, useClass: HashLocationStrategy },
+    { provide: LocationStrategy, useClass: HashLocationStrategy },
     { provide: ErrorHandler, useClass: ErrorHandlerService},
     BsModalRef
   ],

@@ -5,7 +5,8 @@ import { SecurityMaster } from './securitymaster';
 import { Tenor } from './tenor';
 import { Audit } from './audit';
 
-export interface Fxorder extends Audit{
+export interface Fxorder extends Audit {
+    [x: string]: any;
     account: Account;
     assetClass: string;
     broker: Broker;

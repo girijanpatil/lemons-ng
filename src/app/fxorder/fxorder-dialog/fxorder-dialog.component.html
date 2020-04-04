@@ -3,6 +3,47 @@
 </div>
 
 <div class="row" *ngIf="!isProcessing">
+    <div class="col-sm-12">
+        <section class="widget manifest_widget" style="margin:0 !important; padding-bottom:0;">
+            <div class="row" style="border-bottom:1px solid #505661;">
+                <div class="form-group center col-sm-6">
+                    <div class="col-sm-6 p-0">
+                        <select class="form-control input-transparent" (change)="onStrategyChange($event.target.value)" required>
+                            <option value="1" selected>Single Loop Order</option>
+                            <option value="2">Multiple Loop Order</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-6 p-0">
+                        <input type="number" class="form-control input-transparent text-right" [(ngModel)]="loopOrderCount" [disabled]="loopOrderCountDisable" required>
+                    </div>
+                </div>
+                <div class="form-group center col-sm-6">
+                    <ng-container *ngIf="timeLimitStatus else addTimeLimit">
+                        <div class="col-sm-5" style="padding-left: 25px; padding-right: 0;">
+                            <input type="text" class="form-control input-transparent text-center font-weight-bold" value="Time Limit (in min) : ">
+                        </div>
+                        <div class="col-sm-5 p-0">
+                            <input type="number" class="form-control input-transparent" placeholder="(Example: 10)" [(ngModel)]="timeLimitMins" required>
+                        </div>
+                        <div class="col-sm-2 text-right p-0">
+                            <button class="btn-danger btn" (click)="timeLimitStatus = !timeLimitStatus">
+                                <i class="fa fa-times" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </ng-container>
+                    <ng-template #addTimeLimit>
+                        <div class="col-sm-12 p-0 text-right">
+                            <button class="btn btn-warning font-weight-bold" (click)="timeLimitStatus = !timeLimitStatus">
+                                <i class="fa fa-power-off" aria-hidden="true"></i>
+                                Add Time Limit
+                            </button>
+                        </div>
+                    </ng-template>
+                </div>
+            </div>
+        </section>
+    </div>
+
     <div [formGroup]="fxorderFirstForm" class="col-sm-6" style="padding-right:0 !important;">
         <section class="widget manifest_widget" style="margin:0 !important;">
             <div class="row">
@@ -26,8 +67,9 @@
                         <button type="button" class="btn btn-danger" *ngIf="fxorderFirstForm.value.direction=='SELL'" (click)="toggleBuySell()">Sell</button>
                     </div>
                     <div class="col-sm-8">
-                        <input type="hidden" class="form-control input-transparent text-center"  formControlName="dealtCcyId" disabled>
-                        <input type="text" [value]="firstFormDealtCcyName" class="form-control input-transparent text-center" disabled>
+                        <input type="hidden" class="form-control input-transparent text-center"  formControlName="dealtCcyId">
+                        <button type="button" class="btn btn-info" *ngIf="fxorderFirstForm.value.dealtCcyId" (click)="toggleDealtCurrency()">{{ firstFormDealtCcyName }}</button>
+                        <!-- <input type="text" [value]="firstFormDealtCcyName" class="form-control input-transparent text-center" (click)="toggleDealtCurrency()"> -->
                     </div>
                 </div>
                 <div class="form-group center col-sm-6 p-0">
@@ -35,37 +77,49 @@
                         <input type="text" class="form-control input-transparent" placeholder="Notional" formControlName="notional" (blur)="onNotionalChange($event.target.value, true)" required>
                     </div>
                 </div>
-                <div class="form-group center col-sm-12">
+            
+                <div class="form-group center col-sm-6">
+                    <label for="normal-field" class="col-12 control-label rulelabel p-5">Is SPOT</label>
+                    <div class="col-12">
+                        <select class="form-control input-transparent" formControlName="isSpot" (change)="toggleSpot($event.target.value, true)" required>
+                            <option value="no" selected>No</option>
+                            <option value="yes">Yes</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group center col-sm-6">
                     <label for="normal-field" class="col-sm-12 control-label rulelabel p-5">Value Date</label>
-                    <div class="col-sm-6 p-0">
-                        <select class="form-control input-transparent" formControlName="tenorId" (change)="onTenorChange($event.target.value, true)" required>
+                    <!-- <div class="col-sm-6 p-0">
+                        <select class="form-control input-transparent" formControlName="tenorId" (change)="onTenorChange($event.target.value, true)">
                             <option value="" disabled selected>Select</option>
                             <option *ngFor="let tenor of tenors" value="{{ tenor.id }}">{{ tenor.name }}</option>
                         </select>
-                    </div>
-                    <div class="col-sm-6 p-0">
-                        <input type="text" class="form-control input-transparent text-right" bsDatepicker formControlName="settlementDate" (ngModelChange)="onSettlementDateChange($event, true)" required>
+                    </div> -->
+                    <div class="col-sm-12 p-0">
+                        <input *ngIf="isSpot == false" type="text" class="form-control input-transparent text-left" bsDatepicker formControlName="settlementDate" (ngModelChange)="onSettlementDateChange($event, true)" [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" [daysDisabled]="[6,0]" [minDate]="minDate" required>
+                        <input *ngIf="isSpot == true" type="text" class="form-control input-transparent text-left" disabled>
                     </div>
                 </div>
-                <div class="form-group center col-sm-12">
+
+                <div class="form-group center col-sm-6">
                     <label for="normal-field" class="col-12 control-label rulelabel p-5">Limit Price</label>
                     <div class="col-12">
                         <input type="number" class="form-control input-transparent" formControlName="price" required>
                     </div>
                 </div>
+
                 <div class="form-group center col-sm-6">
-                    <label for="normal-field" class="col-12 control-label rulelabel p-5">Good From</label>
+                    <label for="normal-field" class="col-12 control-label rulelabel p-5">TS Allocation Template</label>
                     <div class="col-12">
-                        <input type="text" class="form-control input-transparent" bsDatepicker formControlName="validFrom" required>
+                        <select class="form-control input-transparent" formControlName="tsAllocTemp" (change)="onAllocTempChange($event.target.value, true)" required>
+                            <option value="" disabled selected>Select</option>
+                            <option *ngFor="let at of allocTmp" value="{{ at.allocTemp }}">{{ at.allocTemp }}</option>
+                        </select>
                     </div>
                 </div>
-                <div class="form-group center col-sm-6">
-                    <label for="normal-field" class="col-12 control-label rulelabel p-5">Good Untill</label>
-                    <div class="col-12">
-                        <input type="text" class="form-control input-transparent" bsDatepicker formControlName="validTill" required>
-                    </div>
-                </div>
-                <div class="form-group center col-sm-6">
+
+                <!-- <div class="form-group center col-sm-12">
                     <label for="normal-field" class="col-12 control-label rulelabel p-5">Accounts</label>
                     <div class="col-12">
                         <select class="form-control input-transparent" formControlName="accountId" (change)="onAccountChange($event.target.value)" required>
@@ -73,8 +127,38 @@
                             <option *ngFor="let account of accounts" value="{{ account.id }}">{{ account.accountName }}</option>
                         </select>
                     </div>
+                </div> -->
+                <div class='form-group center col-sm-6'>
+                    <label for="normal-field" class="col-12 control-label rulelabel p-5">Good From</label>
+                    <div class="col-12">
+                        <input type="text" class="form-control input-transparent" (ngModelChange)="onGoodFromDateChange(fxorderFirstForm.value.validFrom, true)" bsDatepicker formControlName="validFrom" [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" [daysDisabled]="[6,0]" [minDate]="minDate" required>
+                    </div>
+                </div>
+                <div class='form-group center col-sm-6'>
+                    <label for="normal-field" class="col-12 control-label rulelabel p-5">Time ( EST / SGT )</label>
+                    <div class="row col-12 bg-input m-0">
+                        <div class="col-sm-8 p-0 m-0">
+                            <timepicker class="p-0 m-0" (ngModelChange)="onGoodFromTimeChange(true)" [(ngModel)]="firstFormGoodFromTime" [ngModelOptions]="{standalone: true}" [showSeconds]="false" [mousewheel]="true" [showSpinners]="false" [showMeridian]="false"></timepicker>
+                        </div>
+                        <button type="button" class="btn btn-warning col-sm-4 bg-input" (click)="firstFormGoodFromTimeZone = toggleTimeZone(firstFormGoodFromTimeZone)">{{ firstFormGoodFromTimeZone }}</button>
+                    </div>
                 </div>
                 <div class="form-group center col-sm-6">
+                    <label for="normal-field" class="col-12 control-label rulelabel p-5">Good Untill</label>
+                    <div class="col-12">
+                        <input type="text" class="form-control input-transparent" (ngModelChange)="onGoodUntilDateChange(fxorderFirstForm.value.validTill, true)" bsDatepicker formControlName="validTill" [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" [daysDisabled]="[6,0]" [minDate]="minDate" required>
+                    </div>
+                </div>
+                <div class='form-group center col-sm-6'>
+                    <label for="normal-field" class="col-12 control-label rulelabel p-5">Time ( EST / SGT )</label>
+                    <div class="row col-12 bg-input m-0">
+                        <div class="col-sm-8 p-0 m-0">
+                            <timepicker class="p-0 m-0" [(ngModel)]="firstFormGoodUntilTime" [ngModelOptions]="{standalone: true}" [showSeconds]="false" [mousewheel]="true" [showSpinners]="false" [showMeridian]="false"></timepicker>
+                        </div>
+                        <button type="button" class="btn btn-warning col-sm-4 bg-input" (click)="firstFormGoodUntilTimeZone = toggleTimeZone(firstFormGoodUntilTimeZone)">{{ firstFormGoodUntilTimeZone }}</button>
+                    </div>
+                </div>
+                <!-- <div class="form-group center col-sm-6">
                     <label for="normal-field" class="col-12 control-label rulelabel p-5">Brokers</label>
                     <div class="col-12">
                         <select class="form-control input-transparent" formControlName="brokerId" (change)="onBrokerChange($event.target.value)" required>
@@ -82,7 +166,7 @@
                             <option *ngFor="let broker of brokers" value="{{ broker.id }}">{{ broker.name }}</option>
                         </select>
                     </div>
-                </div>
+                </div> -->
 
                 <div class="form-group center col-sm-6 hidden">
                     <label for="normal-field" class="col-12 control-label rulelabel p-5">Asset Class</label>
@@ -94,7 +178,7 @@
                 <div class="form-group center col-sm-6 hidden">
                     <label for="normal-field" class="col-12 control-label rulelabel p-5">Order Date</label>
                     <div class="col-12">
-                        <input type="text" class="form-control input-transparent" bsDatepicker formControlName="orderDate" required>
+                        <input type="text" class="form-control input-transparent" bsDatepicker formControlName="orderDate" [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" [daysDisabled]="[6,0]" [minDate]="minDate" required>
                     </div>
                 </div>
             </div>
@@ -112,7 +196,7 @@
                 <div class="form-group center col-sm-12">
                     <label for="normal-field" class="col-12 control-label rulelabel p-5">Ccy Pair</label>
                     <div class="col-12">
-                        <select class="form-control input-transparent" formControlName="securityId" (change)="onCurrencyChange($event.target.value, false)" required>
+                        <select class="form-control input-transparent" formControlName="securityId" (change)="onCurrencyChange($event.target.value, true)" required>
                             <option value="" disabled selected>Select</option>
                             <option *ngFor="let security of securities" value="{{ security.id }}">{{ security.name }}</option>
                         </select>
@@ -124,8 +208,9 @@
                         <button type="button" class="btn btn-danger" *ngIf="fxorderThenForm.value.direction=='SELL'" (click)="toggleBuySell()">Sell</button>
                     </div>
                     <div class="col-sm-8">
-                        <input type="hidden" class="form-control input-transparent text-center"  formControlName="dealtCcyId" disabled>
-                        <input type="text" [value]="thenFormDealtCcyName" class="form-control input-transparent text-center" disabled>
+                        <input type="hidden" class="form-control input-transparent text-center"  formControlName="dealtCcyId">
+                        <button type="button" class="btn btn-info" *ngIf="fxorderThenForm.value.dealtCcyId" (click)="toggleDealtCurrency()">{{ thenFormDealtCcyName }}</button>
+                        <!-- <input type="text" [value]="thenFormDealtCcyName" class="form-control input-transparent text-center" (click)="toggleDealtCurrency()"> -->
                     </div>
                 </div>
                 <div class="form-group center col-sm-6 p-0">
@@ -133,37 +218,49 @@
                         <input type="text" class="form-control input-transparent" placeholder="Notional" formControlName="notional" (blur)="onNotionalChange($event.target.value, false)" required>
                     </div>
                 </div>
-                <div class="form-group center col-sm-12">
+                
+                <div class="form-group center col-sm-6">
+                    <label for="normal-field" class="col-12 control-label rulelabel p-5">Is SPOT</label>
+                    <div class="col-12">
+                        <select class="form-control input-transparent" formControlName="isSpot" (change)="toggleSpot($event.target.value, false)" required>
+                            <option value="no" selected>No</option>
+                            <option value="yes">Yes</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group center col-sm-6">
                     <label for="normal-field" class="col-sm-12 control-label rulelabel p-5">Value Date</label>
-                    <div class="col-sm-6 p-0">
-                        <select class="form-control input-transparent" formControlName="tenorId" (change)="onTenorChange($event.target.value, false)" required>
+                    <!-- <div class="col-sm-6 p-0">
+                        <select class="form-control input-transparent" formControlName="tenorId" (change)="onTenorChange($event.target.value, false)">
                             <option value="" disabled selected>Select</option>
                             <option *ngFor="let tenor of tenors" value="{{ tenor.id }}">{{ tenor.name }}</option>
                         </select>
-                    </div>
-                    <div class="col-sm-6 p-0">
-                        <input type="text" class="form-control input-transparent text-right" bsDatepicker formControlName="settlementDate" (ngModelChange)="onSettlementDateChange($event, false)" required>
+                    </div> -->
+                    <div class="col-sm-12 p-0">
+                        <input *ngIf="isSpot == false" type="text" class="form-control input-transparent text-left" bsDatepicker formControlName="settlementDate" (ngModelChange)="onSettlementDateChange($event, false)" [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" [daysDisabled]="[6,0]" [minDate]="minDate" required>
+                        <input *ngIf="isSpot == true" type="text" class="form-control input-transparent text-left" disabled>
                     </div>
                 </div>
-                <div class="form-group center col-sm-12">
+
+                <div class="form-group center col-sm-6">
                     <label for="normal-field" class="col-12 control-label rulelabel p-5">Limit Price</label>
                     <div class="col-12">
                         <input type="number" class="form-control input-transparent" formControlName="price" required>
                     </div>
                 </div>
+
                 <div class="form-group center col-sm-6">
-                    <label for="normal-field" class="col-12 control-label rulelabel p-5">Good From</label>
+                    <label for="normal-field" class="col-12 control-label rulelabel p-5">TS Allocation Template</label>
                     <div class="col-12">
-                        <input type="text" class="form-control input-transparent" bsDatepicker formControlName="validFrom" required>
+                        <select class="form-control input-transparent" formControlName="tsAllocTemp" (change)="onAllocTempChange($event.target.value, false)" required>
+                            <option value="" disabled selected>Select</option>
+                            <option *ngFor="let at of allocTmp" value="{{ at.allocTemp }}">{{ at.allocTemp }}</option>
+                        </select>
                     </div>
                 </div>
-                <div class="form-group center col-sm-6">
-                    <label for="normal-field" class="col-12 control-label rulelabel p-5">Good Untill</label>
-                    <div class="col-12">
-                        <input type="text" class="form-control input-transparent" bsDatepicker formControlName="validTill" required>
-                    </div>
-                </div>
-                <div class="form-group center col-sm-6">
+                
+                <!-- <div class="form-group center col-sm-12">
                     <label for="normal-field" class="col-12 control-label rulelabel p-5">Accounts</label>
                     <div class="col-12">
                         <select class="form-control input-transparent" formControlName="accountId" required>
@@ -171,8 +268,40 @@
                             <option *ngFor="let account of accounts" value="{{ account.id }}">{{ account.accountName }}</option>
                         </select>
                     </div>
+                </div> -->
+                
+                <div class="form-group center col-sm-6">
+                    <label for="normal-field" class="col-12 control-label rulelabel p-5">Good From</label>
+                    <div class="col-12">
+                        <input type="text" class="form-control input-transparent" bsDatepicker formControlName="validFrom" [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" [daysDisabled]="[6,0]" [minDate]="minDate" required>
+                    </div>
+                </div>
+                <div class='form-group center col-sm-6'>
+                    <label for="normal-field" class="col-12 control-label rulelabel p-5">Time ( EST / SGT )</label>
+                    <div class="row col-12 bg-input m-0">
+                        <div class="col-sm-8 p-0 m-0">
+                            <timepicker class="p-0 m-0" [(ngModel)]="thenFormGoodFromTime" [ngModelOptions]="{standalone: true}" [showSeconds]="false" [mousewheel]="true" [showSpinners]="false" [showMeridian]="false"></timepicker>
+                        </div>
+                        <button type="button" class="btn btn-warning col-sm-4 bg-input" (click)="thenFormGoodFromTimeZone = toggleTimeZone(thenFormGoodFromTimeZone)">{{ thenFormGoodFromTimeZone }}</button>
+                    </div>
                 </div>
                 <div class="form-group center col-sm-6">
+                    <label for="normal-field" class="col-12 control-label rulelabel p-5">Good Untill</label>
+                    <div class="col-12">
+                        <input type="text" class="form-control input-transparent" bsDatepicker formControlName="validTill" [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" [daysDisabled]="[6,0]" [minDate]="minDate" required>
+                    </div>
+                </div>
+                <div class='form-group center col-sm-6'>
+                    <label for="normal-field" class="col-12 control-label rulelabel p-5">Time ( EST / SGT )</label>
+                    <div class="row col-12 bg-input m-0">
+                        <div class="col-sm-8 p-0 m-0">
+                            <timepicker class="p-0 m-0" [(ngModel)]="thenFormGoodUntilTime" [ngModelOptions]="{standalone: true}" [showSeconds]="false" [mousewheel]="true" [showSpinners]="false" [showMeridian]="false"></timepicker>
+                        </div>
+                        <button type="button" class="btn btn-warning col-sm-4 bg-input" (click)="thenFormGoodUntilTimeZone = toggleTimeZone(thenFormGoodUntilTimeZone)">{{ thenFormGoodUntilTimeZone }}</button>
+                    </div>
+                </div>
+
+                <!-- <div class="form-group center col-sm-6">
                     <label for="normal-field" class="col-12 control-label rulelabel p-5">Brokers</label>
                     <div class="col-12">
                         <select class="form-control input-transparent" formControlName="brokerId" required>
@@ -180,7 +309,7 @@
                             <option *ngFor="let broker of brokers" value="{{ broker.id }}">{{ broker.name }}</option>
                         </select>
                     </div>
-                </div>
+                </div> -->
 
                 <div class="form-group center col-sm-6 hidden">
                     <label for="normal-field" class="col-12 control-label rulelabel p-5">Asset Class</label>
@@ -192,7 +321,7 @@
                 <div class="form-group center col-sm-6 hidden">
                     <label for="normal-field" class="col-12 control-label rulelabel p-5">Order Date</label>
                     <div class="col-12">
-                        <input type="text" class="form-control input-transparent" bsDatepicker formControlName="orderDate" required>
+                        <input type="text" class="form-control input-transparent" bsDatepicker formControlName="orderDate" [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" [daysDisabled]="[6,0]" [minDate]="minDate" required>
                     </div>
                 </div>
             </div>
@@ -201,22 +330,24 @@
 
     <div class="col-sm-12" style="border-top:1px solid #3B404A;">
         <section class="widget manifest_widget" style="margin:0 !important; padding-top: 15px !important;">
-            <div class="form-horizontal">
-                <div class="right">
-                    <div class="row">
-                        <div class="col-sm-6"></div>
-                        <div class="col-sm-6 control-label rulelabel mnf_btn ">
-                            
-                            <button class="btn btn-save savebtn btn-lg pull-right" (click)="close()">
-                                <i class="fa fa-times fa-darkicon bg-info text-white"></i> CANCEL
-                            </button>
-                            <button type="submit" class="btn btn-save savebtn btn-lg pull-right" [disabled]="!(fxorderFirstForm.valid && fxorderThenForm.valid)" (click)="save()">
-                                <i class="fa fa-check fa-darkicon bg-success text-white"></i> SAVE
-                            </button>
+            <div class="row">
+                <div class="col-sm-6 p-0">
+                    <!-- <div [formGroup]="fxorderFirstForm" class="form-group center">
+                        <label for="normal-field" class="col-sm-6 control-label rulelabel text-left p-5" style="padding-left:20px !important;">TS Allocation Template</label>
+                        <div class="col-sm-6" style="padding-left:0; padding-right:40px;">
+                            <input type="text" class="form-control input-transparent" formControlName="tsAllocTemp" required>
                         </div>
-        
-                    </div>
+                    </div> -->
                 </div>
+                <div class="col-sm-6 control-label rulelabel mnf_btn right">
+                    <button class="btn btn-save savebtn btn-lg pull-right" (click)="close()">
+                        <i class="fa fa-times fa-darkicon bg-info text-white"></i> CANCEL
+                    </button>
+                    <button type="submit" class="btn btn-save savebtn btn-lg pull-right" [disabled]="!(fxorderFirstForm.valid && fxorderThenForm.valid)" (click)="save()">
+                        <i class="fa fa-check fa-darkicon bg-success text-white"></i> SAVE
+                    </button>
+                </div>
+
             </div>
         </section>
     </div>

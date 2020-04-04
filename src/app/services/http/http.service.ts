@@ -8,11 +8,10 @@ export class HttpService {
 
   constructor(private http: HttpClient) { }
 
-  // BASE_PATH = 'api/';
-  BASE_PATH = environment.apiHost;
+  BASE_PATH = 'api/';
+  // BASE_PATH = environment.apiHost;
 
   getAll(path: string) {
-    console.log(this.BASE_PATH);
     return this.http.get(this.BASE_PATH + path);
   }
 

@@ -14,7 +14,7 @@
                 <div class="form-group center col-sm-12">
                     <label for="normal-field" class="col-12 control-label rulelabel p-5">Ccy Pair</label>
                     <div class="col-12">
-                        <select class="form-control input-transparent" formControlName="securityId" (change)="onCurrencyChange($event.target.value)" required>
+                        <select class="form-control input-transparent" formControlName="securityId" (change)="onCurrencyChange($event.target.value)" required disabled>
                             <option value="" disabled selected>Select</option>
                             <option *ngFor="let security of securities" value="{{ security.id }}">{{ security.name }}</option>
                         </select>
@@ -38,13 +38,13 @@
                 <div class="form-group center col-sm-12">
                     <label for="normal-field" class="col-sm-12 control-label rulelabel p-5">Value Date</label>
                     <div class="col-sm-6 p-0">
-                        <select class="form-control input-transparent" formControlName="tenorId" (change)="onTenorChange($event.target.value)" required>
+                        <select class="form-control input-transparent" formControlName="tenorId" (change)="onTenorChange($event.target.value)">
                             <option value="" disabled selected>Select</option>
                             <option *ngFor="let tenor of tenors" value="{{ tenor.id }}">{{ tenor.name }}</option>
                         </select>
                     </div>
                     <div class="col-sm-6 p-0">
-                        <input type="text" class="form-control input-transparent text-right" bsDatepicker formControlName="settlementDate" (ngModelChange)="onSettlementDateChange($event)" required>
+                        <input type="text" class="form-control input-transparent text-right" formControlName="settlementDate" (ngModelChange)="onSettlementDateChange($event)" bsDatepicker [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" [daysDisabled]="[6,0]" required>
                     </div>
                 </div>
                 <div class="form-group center col-sm-12">
@@ -53,19 +53,7 @@
                         <input type="number" class="form-control input-transparent" formControlName="price" required>
                     </div>
                 </div>
-                <div class="form-group center col-sm-6">
-                    <label for="normal-field" class="col-12 control-label rulelabel p-5">Good From</label>
-                    <div class="col-12">
-                        <input type="text" class="form-control input-transparent" bsDatepicker formControlName="validFrom" required>
-                    </div>
-                </div>
-                <div class="form-group center col-sm-6">
-                    <label for="normal-field" class="col-12 control-label rulelabel p-5">Good Untill</label>
-                    <div class="col-12">
-                        <input type="text" class="form-control input-transparent" bsDatepicker formControlName="validTill" required>
-                    </div>
-                </div>
-                <div class="form-group center col-sm-6">
+                <div class="form-group center col-sm-12">
                     <label for="normal-field" class="col-12 control-label rulelabel p-5">Accounts</label>
                     <div class="col-12">
                         <select class="form-control input-transparent" formControlName="accountId" required>
@@ -75,6 +63,36 @@
                     </div>
                 </div>
                 <div class="form-group center col-sm-6">
+                    <label for="normal-field" class="col-12 control-label rulelabel p-5">Good From</label>
+                    <div class="col-12">
+                        <input type="text" class="form-control input-transparent" bsDatepicker formControlName="validFrom" [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" [daysDisabled]="[6,0]" required>
+                    </div>
+                </div>
+                <div class='form-group center col-sm-6'>
+                    <label for="normal-field" class="col-12 control-label rulelabel p-5">Time ( EST / SGT )</label>
+                    <div class="row col-12 bg-input m-0">
+                        <div class="col-sm-8 p-0 m-0">
+                            <timepicker class="p-0 m-0" [(ngModel)]="goodFromTime" [ngModelOptions]="{standalone: true}" [showSeconds]="false" [mousewheel]="true" [showSpinners]="false" [showMeridian]="false"></timepicker>
+                        </div>
+                        <button type="button" class="btn btn-warning col-sm-4 bg-input" (click)="goodFromTimeZone = toggleTimeZone(goodFromTimeZone)">{{ goodFromTimeZone }}</button>
+                    </div>
+                </div>
+                <div class="form-group center col-sm-6">
+                    <label for="normal-field" class="col-12 control-label rulelabel p-5">Good Untill</label>
+                    <div class="col-12">
+                        <input type="text" class="form-control input-transparent" bsDatepicker formControlName="validTill" [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" [daysDisabled]="[6,0]" required>
+                    </div>
+                </div>
+                <div class='form-group center col-sm-6'>
+                    <label for="normal-field" class="col-12 control-label rulelabel p-5">Time ( EST / SGT )</label>
+                    <div class="row col-12 bg-input m-0">
+                        <div class="col-sm-8 p-0 m-0">
+                            <timepicker class="p-0 m-0" [(ngModel)]="goodUntilTime" [ngModelOptions]="{standalone: true}" [showSeconds]="false" [mousewheel]="true" [showSpinners]="false" [showMeridian]="false"></timepicker>
+                        </div>
+                        <button type="button" class="btn btn-warning col-sm-4 bg-input" (click)="goodUntilTimeZone = toggleTimeZone(goodUntilTimeZone)">{{ goodUntilTimeZone }}</button>
+                    </div>
+                </div>
+                <!-- <div class="form-group center col-sm-6">
                     <label for="normal-field" class="col-12 control-label rulelabel p-5">Brokers</label>
                     <div class="col-12">
                         <select class="form-control input-transparent" formControlName="brokerId" required>
@@ -82,7 +100,7 @@
                             <option *ngFor="let broker of brokers" value="{{ broker.id }}">{{ broker.name }}</option>
                         </select>
                     </div>
-                </div>
+                </div> -->
 
                 <div class="form-group center col-sm-6 hidden">
                     <label for="normal-field" class="col-12 control-label rulelabel p-5">Asset Class</label>
@@ -94,7 +112,7 @@
                 <div class="form-group center col-sm-6 hidden">
                     <label for="normal-field" class="col-12 control-label rulelabel p-5">Order Date</label>
                     <div class="col-12">
-                        <input type="text" class="form-control input-transparent" bsDatepicker formControlName="orderDate" required>
+                        <input type="text" class="form-control input-transparent" bsDatepicker formControlName="orderDate" [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" [daysDisabled]="[6,0]" required>
                     </div>
                 </div>
             </div>

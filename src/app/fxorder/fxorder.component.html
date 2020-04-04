@@ -9,76 +9,172 @@
         <section class="widget">
           <div class="body">
             <div class="row tbl-head">
-              <div class="col-md-6 hidden-xs"></div>
-              <div class="col-md-6">
-                <div id="datatable-table_filter" class="form-inline pull-right">
+              <div class="col-md-6 hidden-xs">
+                <ng-container *ngIf="selectedPair; else orderDateFilterBox;">
+                  <button class="btn bg-black" (click)="selectedPair=null; selectedOrders=[]; selectAllCheckboxes = false;">
+                    <i class="fa fa-arrow-left" aria-hidden="true"></i> 
+                    <b>Back</b>
+                  </button>
+                  <button *ngIf="getSelectedOrders() > 0" (click)="deleteRecords()" class="btn btn-danger" style="margin-left:10px;">Delete Selected Records</button>
+                </ng-container>
+                <ng-template #orderDateFilterBox>
+
+                  <div [formGroup]="orderDateFilter" class="bg-black">
+                    <div class="form-group center col-sm-6">
+                        <label for="normal-field" class="col-sm-4 control-label rulelabel p-5">From Date</label>
+                        <div class="col-sm-8 p-0">
+                            <input type="text" class="form-control input-transparent text-left" formControlName="from" (ngModelChange)="updateOrderDateFilter()" bsDatepicker [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" [daysDisabled]="[6,0]" [maxDate]="maxDate" required>
+                        </div>
+                    </div>
+                    <div class="form-group center col-sm-6">
+                        <label for="normal-field" class="col-sm-4 control-label rulelabel p-5">To Date</label>
+                        <div class="col-sm-8 p-0">
+                            <input type="text" class="form-control input-transparent text-left" formControlName="to" (ngModelChange)="updateOrderDateFilter()" bsDatepicker [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" [daysDisabled]="[6,0]" [maxDate]="maxDate" required>
+                        </div>
+                    </div>
+                  </div>
+
+                </ng-template>
+              </div>
+              <div class="col-md-6 text-right">
+                <!-- <div id="datatable-table_filter" class="form-inline pull-right">
                   <label>
                     <input type="search" class="form-control input-transparent ml-sm" placeholder=" Search" aria-controls="datatable-table">
                   </label>
-                </div>
+                </div> -->
+                <button class="btn bg-black" (click)="reloadData()">
+                  <i class="fa fa-refresh" aria-hidden="true"></i>  
+                  <b>Reload Data</b>
+                </button>
               </div>
             </div>
-    
-            <table class="table table-striped" >
+            <!-- Parent -->
+            <table *ngIf="!selectedPair" class="table table-striped" >
               <thead>
                 <tr>
+                  <th>Lemons Block Id</th>
+                  <th>Ccy Pair</th>
+                  <th>Dealt Ccy</th>
+                  <th>Notional</th>
+                  <th>Status</th>
+                  <!-- <th>Account</th> -->
+                  <th>Loop Order Pairs</th>
+                  <th>Order Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                <ng-container *ngFor="let pairs of filteredFxOrders;">
+                  <tr *ngFor="let order of pairs.fxOrderUIs | slice:0:1; let i=index" (click)="selectedPair = pairs.loopOrderId">
+                    <td>{{ pairs.loopOrderId }}</td>
+                    <td>{{ order.security.name }}</td>
+                    <td>{{ order.dealtCcy.code }}</td>
+                    <td>{{ order.notional | number }}</td>
+                    <td *ngIf="pairs.status=='Executing'">
+                      <button class="btn btn-info btn-sm pointer-none">{{ pairs.status | uppercase }}</button>
+                    </td>
+                    <td *ngIf="pairs.status=='Executed'">
+                      <button class="btn btn-success btn-sm pointer-none">{{ pairs.status | uppercase }}</button>
+                    </td>
+                    <td *ngIf="pairs.status=='REJECTED'">
+                      <button class="btn btn-danger btn-sm pointer-none">{{ pairs.status | uppercase }}</button>
+                    </td>
+                    <!-- <td>{{ order.account.accountName }}</td> -->
+                    <td>{{ pairs.noOfPairs }}</td>
+                    <td>{{ order.orderDate | date: 'd MMM yyyy' }}</td>
+                  </tr>
+                </ng-container>
+              </tbody>
+            </table>
+            <!-- Child -->
+            <table *ngIf="selectedPair" class="table table-striped">
+              <thead>
+                <tr>
+                  <th class="text-center">
+                    <button *ngIf="selectAllCheckboxes; else elseBtn" (click)="toggleAllCheckboxes(false)" class="btn bg-transparent">
+                      <i class="fa fa-check-square-o" style="font-size:18px;" aria-hidden="true"></i>
+                    </button>
+                    <ng-template #elseBtn>
+                      <button class="btn bg-transparent" (click)="toggleAllCheckboxes(true)">
+                        <i class="fa fa-square-o" style="font-size:18px;" aria-hidden="true"></i>
+                      </button>
+                    </ng-template>
+                    <!-- <input type="checkbox" class="icheck2" (click)="toggleAllCheckboxes()" [(checked)]="selectAllCheckboxes"> -->
+                  </th>
                   <th>Lemon Id</th>
-                  <th>TS Id</th>
                   <th>Ccy Pair</th>
                   <th>Direction</th>
                   <th>Notional</th>
                   <th>Fwd Rate</th>
                   <th>Status</th>
-                  <th>Account</th>
-                  <th>Broker</th>
+                  <!-- <th>Account</th> -->
+                  <th>Settlement Date</th>
                   <!-- <th>Modified By</th>
                   <th>Modified On</th> -->
-                  <th colspan="2">Actions</th>
+                  <th>Actions</th>
+                  <th>TS Id</th>
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let order of fxorders">
-                  <td>{{ order.id }}</td>
-                  <td>{{ order.orderId }}</td>
-                  <td>{{ order.security.name }}</td>
-                  <td *ngIf="order.direction=='BUY'">
-                    <button class="btn btn-success btn-sm" style="pointer-events:none;">{{ order.direction }}</button>
-                  </td>
-                  <td *ngIf="order.direction=='SELL'">
-                    <button class="btn btn-danger btn-sm" style="pointer-events:none;">{{ order.direction }}</button>
-                  </td>
-                  <td>{{ order.notional }}</td>
-                  <td>{{ order.price }}</td>
-                  <td *ngIf="order.status=='EXECUTED'">
-                    <button class="btn btn-success btn-sm" style="pointer-events:none;">{{ order.status }}</button>
-                  </td>
-                  <td *ngIf="order.status=='POSTED'">
-                    <button class="btn btn-warning btn-sm" style="pointer-events:none;">{{ order.status }}</button>
-                  </td>
-                  <td *ngIf="order.status=='WAIT'">
-                    <button class="btn btn-info btn-sm" style="pointer-events:none;">{{ order.status }}</button>
-                  </td>
-                  <td>{{ order.account.accountName }}</td>
-                  <td>{{ order.broker.name }}</td>
-                  <!-- <td>{{ order.modifiedBy }}</td>
-                  <td>{{ order.modifiedOn + 'Z' | date: 'medium' }}</td> -->
-                  <td>
-                    <button *ngIf="order.status!='EXECUTED'" class="btn btn-inverse btn-sm" (click)="edit(order)">
-                      <span class="glyphicon glyphicon-wrench"></span> EDIT
-                    </button>
-                    <button *ngIf="order.status=='EXECUTED'" class="btn btn-inverse btn-sm" disabled>
-                      <span class="glyphicon glyphicon-wrench"></span> EDIT
-                    </button>
-                  </td>
-                  <td>
-                    <button *ngIf="order.status=='WAIT'" class="btn btn-inverse btn-sm" (click)="delete(order.id)">
-                      <span class="glyphicon glyphicon-trash"></span> Delete
-                    </button>
-                    <button *ngIf="order.status!='WAIT'" class="btn btn-inverse btn-sm" disabled>
-                      <span class="glyphicon glyphicon-trash"></span> Delete
-                    </button>
-                  </td>
-                </tr>
+                <ng-container *ngFor="let pairs of filteredFxOrders;">
+                  <ng-container *ngIf="pairs.loopOrderId == selectedPair">
+                    <tr *ngFor="let order of pairs.fxOrderUIs;" tooltip="{{ order.errorMessage }}">
+                      <td class="text-center">
+                        <ng-container *ngIf="order.status=='WAIT'; else elseBlock">
+                          <input type="checkbox" class="icheck2 activeCheckbox" (click)="toggleSelectOrder(order.id)" [value]="order.id" [disabled]="order.status!='WAIT'">
+                        </ng-container>
+                        <ng-template #elseBlock>
+                          <input type="checkbox" class="icheck2" (click)="toggleSelectOrder(order.id)" [value]="order.id" [disabled]="order.status!='WAIT'">
+                        </ng-template>
+                      </td>
+                      <td>{{ order.id }}</td>
+                      <td>{{ order.security.name }}</td>
+                      <td *ngIf="order.direction=='BUY'">
+                        <button class="btn btn-success btn-sm pointer-none">{{ order.direction }}</button>
+                      </td>
+                      <td *ngIf="order.direction=='SELL'">
+                        <button class="btn btn-danger btn-sm pointer-none">{{ order.direction }}</button>
+                      </td>
+                      <td>{{ order.notional | number }}</td>
+                      <td>{{ order.price }}</td>
+                      <td *ngIf="order.status=='EXECUTED'">
+                        <button class="btn btn-success btn-sm pointer-none">{{ order.status }}</button>
+                      </td>
+                      <td *ngIf="order.status=='POSTED'">
+                        <button class="btn btn-warning btn-sm pointer-none">{{ order.status }}</button>
+                      </td>
+                      <td *ngIf="order.status=='WAIT'">
+                        <button class="btn btn-info btn-sm pointer-none">{{ order.status }}</button>
+                      </td>
+                      <td *ngIf="order.status=='REJECTED'">
+                        <button class="btn btn-danger btn-sm pointer-none">{{ order.status }}</button>
+                      </td>
+                      <td *ngIf="order.status=='INACTIVE'">
+                        <button class="btn btn-inverse btn-sm pointer-none">{{ order.status }}</button>
+                      </td>
+                      <!-- <td>{{ order.account.accountName }}</td> -->
+                      <td>{{ order.settlementDate | date: 'd MMM yyyy' }}</td>
+                      <!-- <td>{{   }}</td>
+                      <td>{{ order.modifiedOn + 'Z' | date: 'medium' }}</td> -->
+                      <!-- <td>
+                        <button *ngIf="order.status=='WAIT'" class="btn btn-inverse btn-sm" (click)="edit(order)">
+                          <span class="glyphicon glyphicon-wrench"></span> EDIT
+                        </button>
+                        <button *ngIf="order.status!='WAIT'" class="btn btn-inverse btn-sm" disabled>
+                          <span class="glyphicon glyphicon-wrench"></span> EDIT
+                        </button>
+                      </td> -->
+                      <td>
+                        <button *ngIf="order.status=='WAIT'" class="btn btn-inverse btn-sm" (click)="delete(order.id)">
+                          <span class="glyphicon glyphicon-trash"></span> Delete
+                        </button>
+                        <button *ngIf="order.status!='WAIT'" class="btn btn-inverse btn-sm" disabled>
+                          <span class="glyphicon glyphicon-trash"></span> Delete
+                        </button>
+                      </td>
+                      <td>{{ order.orderId }}</td>
+                    </tr>
+                  </ng-container>
+                </ng-container>
               </tbody>
             </table>
           </div>

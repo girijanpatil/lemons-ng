@@ -1,70 +1,49 @@
-<!-- <div fxLayoutAlign="center center" fxFill>
-    <mat-card class="example-card" fxFlex="25" class="mat-elevation-z10" fxFlex.xs="90">
-        <mat-card-header fxLayoutAlign="start center">
-          <mat-card-title>Login</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <form [formGroup]="loginForm" fxLayout="column">
-            <div fxLayout="row">
-                <mat-form-field fxFlex>
-                    <input matInput placeholder="Email" formControlName="email">
-                </mat-form-field>
-            </div>
-            <div fxLayout="row">
-                <mat-form-field fxFlex>
-                    <input matInput placeholder="Password" formControlName="password" type="password">
-                </mat-form-field>
-            </div>
-            <div fxLayout="row" fxLayoutAlign="end center">
-              <button mat-raised-button color="primary" (click)="login()">Login</button>
-            </div>
-          </form>
-        </mat-card-content>
-        <mat-card-actions fxLayoutAlign="end center" class="p-2">
-        </mat-card-actions>
-      </mat-card>
-</div> -->
+<div *ngIf="isLoading; else loginBox" class="text-center">
+    <img style="padding-top:222px; max-width:128px;" src="../assets/img/loader.gif">
+    <p style="font-weight:bold;">Please wait...</p>
+</div>
 
-
-<div id="loginBox">
-  <div class="single-widget-container">
-    <section class="widget login-widget">
-        <header class="text-align-center">
-            <img src="../../../assets/img/logo.png" class="rounded mx-auto d-block" alt="Responsive image">
-        </header>
-        <div class="body">
-            <form [formGroup]="loginForm" fxLayout="column">
-                <fieldset>
-                    <div class="form-group">
-                        <label for="email">Email</label>
-                        <div class="input-group">
-                            <span class="input-group-addon">
-                                <i class="fa fa-user"></i>
-                            </span>
-                            
-                            <input id="email" type="email" class="form-control input-lg input-transparent" placeholder="Username" autofocus="" data-val="true" data-val-required="The Username field is required." formControlName="email">
+<ng-template #loginBox>
+    <div id="loginBox">
+        <div class="single-widget-container">
+            <section class="widget login-widget">
+                <header class="text-align-center">
+                    <img src="../../../assets/img/logo.png" class="rounded mx-auto d-block" alt="Responsive image">
+                </header>
+                <div class="body">
+                    <form [formGroup]="loginForm" fxLayout="column">
+                        <fieldset>
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-user"></i>
+                                    </span>
+                                    
+                                    <input id="email" type="email" class="form-control input-lg input-transparent" placeholder="Username" data-val="true" data-val-required="The Username field is required." formControlName="email">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="password">Password</label>
+    
+                                <div class="input-group input-group-lg">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-lock"></i>
+                                    </span>
+                                    <input id="password" type="password" class="form-control input-lg input-transparent" placeholder="Your Password" autocomplete="off" data-val="true" data-val-required="The Password field is required." formControlName="password">                                
+                                </div>
+                            </div>
+                        </fieldset>
+                        <div class="form-actions">
+                            <button class="btn btn-block btn-lg btn-primary" name="button" (click)="login()">
+                                <small>Log In</small>
+                            </button>
+                            <div class="action-links">
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="password">Password</label>
-
-                        <div class="input-group input-group-lg">
-                            <span class="input-group-addon">
-                                <i class="fa fa-lock"></i>
-                            </span>
-                            <input id="password" type="password" class="form-control input-lg input-transparent" placeholder="Your Password" autocomplete="off" data-val="true" data-val-required="The Password field is required." formControlName="password">                                
-                        </div>
-                    </div>
-                </fieldset>
-                <div class="form-actions">
-                    <button class="btn btn-block btn-lg btn-primary" name="button" (click)="login()">
-                        <small>Log In</small>
-                    </button>
-                    <div class="action-links">
-                    </div>
+                    </form>
                 </div>
-            </form>
+            </section>
         </div>
-    </section>
-</div>
-</div>
+    </div>
+</ng-template>

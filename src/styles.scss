@@ -143,3 +143,31 @@ textarea:disabled {
 .p-5{
 	padding:5px !important;
 }
+
+.bs-timepicker-field, .bs-timepicker-field:focus {
+	background-color: #3B404A;
+	border-color: #373C45;
+	color: #fff;
+	outline: none !important;
+	box-shadow: none !important;
+}
+
+.bg-input {
+	background-color: #3B404A;
+	border-color: #373C45;
+	color: #fff;
+	outline: none !important;
+	box-shadow: none !important;
+}
+
+.font-weight-bold {
+	font-weight: bold !important;
+}
+
+.pointer-none {
+	pointer-events: none !important;
+}
+
+.tooltip-inner {
+    white-space:pre-wrap;
+}
